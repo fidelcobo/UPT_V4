@@ -20,6 +20,7 @@ class SignalsProc(QObject):
     informacion = pyqtSignal(str)
     error_fichero = pyqtSignal(str)
     buscando = pyqtSignal()
+    warning = pyqtSignal(str)
     # error_oferta = pyqtSignal()
     fin_OK_backouts = pyqtSignal(object, list, object)
     fin_OK_csv = pyqtSignal(object, object, object, bool)
@@ -150,6 +151,8 @@ class Mantenimiento(QtWidgets.QDialog, Ui_Maintenance_Dialog):
                 trabajo.signals.buscando.connect(self.buscando)
                 # trabajo.signals.error_oferta.connect(self.fallo_oferta)
                 trabajo.signals.error_fichero.connect(self.notif_error)
+                trabajo.signals.warning.connect(self.notif_warning)
+
 
                 self.threadpool.start(trabajo)
 
@@ -182,6 +185,9 @@ class Mantenimiento(QtWidgets.QDialog, Ui_Maintenance_Dialog):
         QtWidgets.QMessageBox.critical(self, "Error", text)
         self.cancel_button.setEnabled(False)
         self.ok_button.setEnabled(True)
+
+    def notif_warning(self, text):
+        QtWidgets.QMessageBox.information(self, "Aviso", text)
 
     def reportar(self, text):
         self.progreso.show()

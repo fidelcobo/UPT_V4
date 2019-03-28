@@ -2,6 +2,7 @@ import datetime
 import locale
 import os
 from os.path import dirname
+from PyQt5 import QtWidgets
 
 import openpyxl
 from openpyxl import Workbook
@@ -155,7 +156,11 @@ def calculo_backouts(fich_a, light, instance):
                 tabla_datos_cisco.remove(item)
 
         # Finalmente, completamos los datos de la tabla_datos_cisco consultando al API de Didata los costes del GDC
-        request_gdc_cost_list(tabla_datos_cisco)  # Este procedimiento escribe sobre la propia tabla los precios GDC
+        mensaje_api = request_gdc_cost_list(tabla_datos_cisco)  # Este procedimiento escribe sobre la propia tabla los precios GDC
+
+        if mensaje_api != 'OK': # La consulta con el API no ha resultado correcta
+            # Notificamos el error. El coste del GDC queda a cero
+            padre.signals.warning.emit(mensaje_api)
 
     else:  # El formato de la oferta no es bueno
         text = 'El formato de la oferta no es correcto\n El nombre de algún campo clave es incorrecto o no existe'

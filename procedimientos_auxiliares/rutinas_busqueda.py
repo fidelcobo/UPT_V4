@@ -196,15 +196,17 @@ def request_gdc_cost_list(tabla_articulos: list):
                                 print(serv['CombinedPrice'])
                                 item.gdc_cost = 12 * float(serv['CombinedPrice'])
 
+            return 'OK'
 
         else:
             print(resp.status_code)
-            return
+            return 'Error {}. El coste del GDC no ha podido consultarse en el API'.format(resp.status_code)
 
     except requests.exceptions.ReadTimeout:
         print('Esto va muy lento. E bazura')
-        return
+        return 'El API tarda mucho en responder. El coste del GDC se deja a cero'
 
-    except ConnectionError:
+    except:
         print('Error de conexión. E bazura')
-        return
+        return 'No se ha podido establecer conexión con el API. Verifique su configuración de red.' \
+               ' El coste del GDC se deja a cero'
