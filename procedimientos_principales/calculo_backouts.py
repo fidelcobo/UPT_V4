@@ -189,7 +189,10 @@ def calculo_backouts(fich_a, light, instance):
             if encontrado:  # El código está en el catálogo estándar de Cisco
                 end_date_excel[k][0].value = end_of_support
                 backout_excel[k][0].value = back_out
-                coste = float(list_price)
+                if list_price:
+                    coste = float(list_price)
+                else:
+                    coste = 0.0  # No hay backout para este seervicio
                 price_excel[k][0].value = coste
                 internal_spain_cost[k][0].value = round(float(coste_interno) * coef_coste_interno.get(serv_level, 0), 2)
                 gdc_cost[k][0].value = float(coste_gdc)

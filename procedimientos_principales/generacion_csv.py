@@ -35,7 +35,7 @@ def generacion_csv(oferta, light, instance):
         ok, lista_columnas = busca_columnas(sheet, lista_busqueda, HEADERS_ROW)
 
     else:  # Plantilla larga
-        lista_busqueda = ['Part Number to quote', 'End Date', ' SKU - Entitlement Uptime/Smartnet Services',
+        lista_busqueda = ['Part Number to quote', 'End Date', 'SKU - Entitlement Uptime/Smartnet Services',
                           'SKU Backout', 'Unit Backout Price List (EUR) - ANNUAL']
         ok, lista_columnas = busca_columnas(sheet, lista_busqueda, HEADERS_ROW)
 
