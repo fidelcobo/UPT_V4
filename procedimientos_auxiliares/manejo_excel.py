@@ -114,6 +114,8 @@ def pass_to_excel(codes, uptime_code, uptime_descr, tech, manufacturer, init_dat
                 hoja['AF' + fila_sig] = tech[i]
                 hoja['AG' + fila] = serial_no[i]
                 hoja['AG' + fila_sig] = serial_no[i]
+                hoja['AI' + fila] = 226  # Nuevo campo 24/5/2019
+
                 curr_row += 2
                 num_fila += 3
 

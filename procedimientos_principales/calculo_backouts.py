@@ -56,7 +56,7 @@ def calculo_backouts(fich_a, light, instance):
         else:  # Se usa la plantilla completa
             sheet = libro_oferta.get_sheet_by_name('Quote_Detail')
             lista_busqueda = ['Part Number to quote', 'Last Date of Support',
-                              ' SKU - Entitlement Uptime/Smartnet Services', 'SKU Backout',
+                              'SKU - Entitlement Uptime/Smartnet Services', 'SKU Backout',
                               'Unit Backout Price List (USD) - ANNUAL', 'Vendor', 'GDC Cost Price V4 $ - ANNUAL',
                               'DD Spain Cost Price V4 $ - ANNUAL']
     except:
