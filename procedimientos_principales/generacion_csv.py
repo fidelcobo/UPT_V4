@@ -20,7 +20,7 @@ def generacion_csv(oferta, light, instance):
 
     try:
         libro_oferta = openpyxl.load_workbook(file_ramon, data_only=True)
-        sheet = libro_oferta.get_active_sheet()
+        sheet = libro_oferta.get_sheet_by_name('Quote_Detail')
 
     except:
         text = 'Fichero de oferta {} \nno procesable \n Elija otro.'.format(file_ramon)

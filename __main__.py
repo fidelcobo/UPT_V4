@@ -5,6 +5,7 @@ from PyQt5 import QtWidgets
 from clases import Mantenimiento
 
 
+
 def main():
     app = QtWidgets.QApplication(sys.argv)  # A new instance of QApplication
     progr = Mantenimiento()  # We set the form to be our ExampleApp (design)

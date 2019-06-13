@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'of_mantenimiento.ui'
+# Form implementation generated from reading ui file './Fich_Designer/of_mantenimiento.ui'
 #
-# Created by: PyQt5 UI code generator 5.11.3
+# Created by: PyQt5 UI code generator 5.12
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_Maintenance_Dialog(object):
     def setupUi(self, Maintenance_Dialog):
@@ -18,6 +19,7 @@ class Ui_Maintenance_Dialog(object):
         font.setBold(False)
         font.setWeight(50)
         Maintenance_Dialog.setFont(font)
+        Maintenance_Dialog.setFocusPolicy(QtCore.Qt.NoFocus)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/Alien.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         Maintenance_Dialog.setWindowIcon(icon)
@@ -109,9 +111,14 @@ class Ui_Maintenance_Dialog(object):
         self.operacion.setAlignment(QtCore.Qt.AlignCenter)
         self.operacion.setObjectName("operacion")
         self.label = QtWidgets.QLabel(Maintenance_Dialog)
-        self.label.setGeometry(QtCore.QRect(340, 10, 61, 61))
+        self.label.setGeometry(QtCore.QRect(10, 10, 81, 31))
+        self.label.setFocusPolicy(QtCore.Qt.NoFocus)
+        self.label.setStyleSheet("")
+        self.label.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.label.setFrameShadow(QtWidgets.QFrame.Plain)
+        self.label.setMidLineWidth(0)
         self.label.setText("")
-        self.label.setPixmap(QtGui.QPixmap(":/didata.png"))
+        self.label.setPixmap(QtGui.QPixmap(":/NTT.png"))
         self.label.setScaledContents(True)
         self.label.setObjectName("label")
         self.version = QtWidgets.QLabel(Maintenance_Dialog)
@@ -149,4 +156,5 @@ class Ui_Maintenance_Dialog(object):
         self.operacion.setText(_translate("Maintenance_Dialog", "<html><head/><body><p align=\"center\"><span style=\" font-size:12pt; font-weight:600;\">Búsqueda de backouts</span></p></body></html>"))
         self.plantillaLight.setText(_translate("Maintenance_Dialog", "Usar plantilla light"))
 
-from clases_pantallas import icons_rc
+
+import icons_rc

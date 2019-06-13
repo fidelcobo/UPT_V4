@@ -267,8 +267,8 @@ font-color:rgb(195, 0, 0)</string>
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>320</x>
-     <y>20</y>
+     <x>10</x>
+     <y>10</y>
      <width>81</width>
      <height>31</height>
     </rect>
