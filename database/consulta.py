@@ -45,4 +45,6 @@ def look_for_cisco_list(sku: str, serv_list: list, db, smartnet: bool):
             engine.dispose()
             return found, articulo.serv_code, articulo.price, articulo.eos
 
+    session.close()
+    engine.dispose()
     return found, None, None, None  # No figura en el catálogo

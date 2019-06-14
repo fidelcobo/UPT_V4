@@ -208,8 +208,9 @@ class Mantenimiento(QtWidgets.QDialog, Ui_Maintenance_Dialog):
             aviso = NotFound(not_found_list)
             aviso.show()
             aviso.exec()
+
             # Además, guardamos los códigos no encontrados en el fichero no_encontrados.csv
-            carpeta, nombre_file = os.path.split(self.fich_oferta.text())
+            # carpeta, nombre_file = os.path.split(self.fich_oferta.text())
             with open(file_not_found, 'w') as k:
                 for item in not_found_list:
                     k.writelines(item + '\n')
