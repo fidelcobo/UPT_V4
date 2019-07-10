@@ -49,7 +49,7 @@ def busca_columnas(sheet, lista_busca: list, fila_busca: str) -> object:
                 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC', 'AD', 'AE', 'AF', 'AG', 'AH', 'AI', 'AJ', 'AK', 'AL', 'AM',
                 'AN', 'AO', 'AP', 'AR', 'AS', 'AT', 'AU', 'AV', 'AW', 'AX', 'AY', 'AZ', 'BA', 'BB', 'BC', 'BD', 'BE',
                 'BF', 'BG', 'BH', 'BI', 'BJ', 'BK', 'BL', 'BM', 'BN', 'BO', 'BP', 'BQ', 'BR', 'BS', 'BT', 'BU', 'BV',
-                'BW', 'BX', 'BY', 'BZ', 'CA', 'CB', 'CC', 'CD', 'CE']
+                'BW', 'BX', 'BY', 'BZ', 'CA', 'CB', 'CC', 'CD', 'CE', 'CF', 'CG', 'CH', 'CI']
 
     result_busca = []
 
@@ -85,7 +85,7 @@ def fill_aux(lista, hoja):
 def buscar_en_tabla_cisco(codigo, sla, tabla_datos_cisco):
     """
     :Este procedimeinto devuelve los datos significativos de la combinación SKU-SLA si existen en catálogo.
-    :Si no, devuelve el parámetro encontrado a False. Se consulta la tabla que guarda los datos significativos
+    :Si no, devuelve el parámetro 'encontrado' a False. Se consulta la tabla que guarda los datos significativos
     :extraídos de la base de datos.
     :param codigo: El SKU del artículo cuyo backout se busca
     :param sla: el SLA del backuot (PSRN, PSUP, etc.)
@@ -143,9 +143,9 @@ def buscar_en_tabla_cisco(codigo, sla, tabla_datos_cisco):
 def request_gdc_cost_list(tabla_articulos: list):
     """
     Este procedimiento consulata al API de Didata y rellena el coste del GDC para los artículos listados en la
-    tabla recibida como parámetro. Si falla la conexión o tarda mucho, devuelve 0
+    tabla recibida como parámetro. Si falla la conexión o tarda mucho, devuelve mensaje de error y rellena el coste a 0
     :param tabla_articulos: La tabla en la que ha de rellenarse el coste del GDC
-    :return:
+    :return: OK si bien; mensaje de error si ha habido problemas
     """
     # Primeramente componemos la lista de diccionarios que entregamos al API para consultar
 

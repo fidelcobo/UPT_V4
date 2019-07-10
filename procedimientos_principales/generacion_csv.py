@@ -18,6 +18,8 @@ def generacion_csv(oferta, light, instance):
     file_ramon = oferta
     carpeta, file_name = os.path.split(file_ramon)
 
+    instance.signals.informacion.emit('Abriendo fichero de oferta')
+
     try:
         libro_oferta = openpyxl.load_workbook(file_ramon, data_only=True)
         sheet = libro_oferta.get_sheet_by_name('Quote_Detail')
@@ -28,6 +30,8 @@ def generacion_csv(oferta, light, instance):
         return
 
     # Buscanos ahora en qué columnas está la información relevante. Lo haremos en varias tandas
+
+    instance.signals.informacion.emit('Procesando oferta')
 
     if light:  # Usamos plantilla Light
         lista_busqueda = ['Part Number real (*)', 'Fecha fin', 'Entitlement Uptime',

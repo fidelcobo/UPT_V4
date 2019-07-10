@@ -174,6 +174,7 @@ class Mantenimiento(QtWidgets.QDialog, Ui_Maintenance_Dialog):
                 get_csv.signals.fin_OK_backouts.connect(self.finalizar_backouts)
                 get_csv.signals.error_fichero.connect(self.notif_error)
                 get_csv.signals.fin_OK_csv.connect(self.finalizar_csv)
+                get_csv.signals.informacion.connect(self.reportar)
                 # get_csv.signals.error_oferta.connect(self.fallo_oferta)
 
                 self.threadpool.start(get_csv)
@@ -285,6 +286,10 @@ class Mantenimiento(QtWidgets.QDialog, Ui_Maintenance_Dialog):
             self.cancel_button.setEnabled(False)
             self.ok_button.setEnabled(True)
             return
+
+        self.progreso.setText('')
+        self.progreso.hide()  # Cerramos la caja informativa, ya no hace falta
+
         # No ha habido problemas en la generación de los libros de oferta
         fichero_auxiliar_excel = os.path.join(carpeta, 'auxiliar_' + 'USD' + '.xlsx')
         fichero_csv = os.path.join(carpeta, 'upload_direct_' + 'USD' + '.csv')

@@ -36,7 +36,7 @@ def calculo_backouts(fich_a, light, instance):
     file_ramon = fich_a  # El fichero Excel de la oferta
 
     padre = instance  # Es la instancia de la clase principal que invocó este procedimiento. Lo usamos para presentar
-    # pantallas de mensajes
+    # pantallas de mensajes y enviar mensajes con información relevante (signals)
 
     # Confeccionamos ahora unos diccionarios que nos van a ayudar a relacionar los servicios con los códigos de PSS,
     # smartnet y los coeficientes aplicables para calcular los costes
@@ -76,7 +76,7 @@ def calculo_backouts(fich_a, light, instance):
         back_net_col = back_cost_col[0]
 
     if ok:  # El formato del fichero de oferta parece bueno. Extraemos la ubicación de las columnas clave.
-            # Estas columnas figuran en lista_columnas
+        # Estas columnas figuran en lista_columnas
 
         code_col, end_date_col, sla_col, back_col, price_col, manufact_col, \
         gdc_cost_col, internal_spain_cost_col = lista_columnas
@@ -85,18 +85,18 @@ def calculo_backouts(fich_a, light, instance):
 
         # A continuación colocamos en listas los datos fundamentales de la oferta
 
-        codes_excel = sheet[code_col + '11': code_col + last_row]
-        end_date_excel = sheet[end_date_col + '11': end_date_col + last_row]
-        sla_excel = sheet[sla_col + '11': sla_col + last_row]
-        backout_excel = sheet[back_col + '11': back_col + last_row]
-        price_excel = sheet[price_col + '11': price_col + last_row]
-        internal_spain_cost = sheet[internal_spain_cost_col + '11': internal_spain_cost_col + last_row]
-        gdc_cost = sheet[gdc_cost_col + '11': gdc_cost_col + last_row]
+        codes_excel = sheet[code_col + FIRST_ROW: code_col + last_row]
+        end_date_excel = sheet[end_date_col + FIRST_ROW: end_date_col + last_row]
+        sla_excel = sheet[sla_col + FIRST_ROW: sla_col + last_row]
+        backout_excel = sheet[back_col + FIRST_ROW: back_col + last_row]
+        price_excel = sheet[price_col + FIRST_ROW: price_col + last_row]
+        internal_spain_cost = sheet[internal_spain_cost_col + FIRST_ROW: internal_spain_cost_col + last_row]
+        gdc_cost = sheet[gdc_cost_col + FIRST_ROW: gdc_cost_col + last_row]
 
         if light:
             net_cost = sheet[str(back_net_col) + '11': back_net_col + last_row]
 
-        manufacturer = sheet[manufact_col + '11': manufact_col + last_row]
+        manufacturer = sheet[manufact_col + FIRST_ROW: manufact_col + last_row]
         print(datetime.datetime.now(), 'ok')
         descuento = sheet[CELDA_DESCUENTO].value
 
@@ -143,7 +143,7 @@ def calculo_backouts(fich_a, light, instance):
                 print(item)
                 if smt:
                     item.service_price_list = round(float(smt_list_price) *
-                                                float(coef_servicio.get(item.serv_lev.lower())), 2)
+                                                    float(coef_servicio.get(item.serv_lev.lower())), 2)
                 else:
                     item.service_price_list = 0.0
 
@@ -156,9 +156,10 @@ def calculo_backouts(fich_a, light, instance):
                 tabla_datos_cisco.remove(item)
 
         # Finalmente, completamos los datos de la tabla_datos_cisco consultando al API de Didata los costes del GDC
-        mensaje_api = request_gdc_cost_list(tabla_datos_cisco)  # Este procedimiento escribe sobre la propia tabla los precios GDC
+        mensaje_api = request_gdc_cost_list(
+            tabla_datos_cisco)  # Este procedimiento escribe sobre la propia tabla los precios GDC
 
-        if mensaje_api != 'OK': # La consulta con el API no ha resultado correcta
+        if mensaje_api != 'OK':  # La consulta con el API no ha resultado correcta
             # Notificamos el error. El coste del GDC queda a cero
             padre.signals.warning.emit(mensaje_api)
 
