@@ -124,7 +124,7 @@ def calculo_backouts(fich_a, light, instance):
         for item in tabla_datos_cisco:
 
             # Ahora buscamos si los items están en la base de datos de cisco
-            padre.signals.informacion.emit('Buscando códigos en base de datos y API')
+            padre.signals.informacion.emit('Buscando códigos en base de datos')
 
             lista_busca_pss = upt_pss_codes.get(item.serv_lev, None)  # Posibles PSS asociados al servicio Uptime
             lista_busca_smartnet = upt_smartnet_codes.get(item.serv_lev, None)  # Posibles Smartnet asociados al
@@ -156,6 +156,7 @@ def calculo_backouts(fich_a, light, instance):
                 tabla_datos_cisco.remove(item)
 
         # Finalmente, completamos los datos de la tabla_datos_cisco consultando al API de Didata los costes del GDC
+        padre.signals.informacion.emit('Consultando costes de GDC al API')
         mensaje_api = request_gdc_cost_list(
             tabla_datos_cisco)  # Este procedimiento escribe sobre la propia tabla los precios GDC
 

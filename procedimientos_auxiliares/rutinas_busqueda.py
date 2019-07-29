@@ -142,9 +142,10 @@ def buscar_en_tabla_cisco(codigo, sla, tabla_datos_cisco):
 
 def request_gdc_cost_list(tabla_articulos: list):
     """
-    Este procedimiento consulata al API de Didata y rellena el coste del GDC para los artículos listados en la
-    tabla recibida como parámetro. Si falla la conexión o tarda mucho, devuelve mensaje de error y rellena el coste a 0
-    :param tabla_articulos: La tabla en la que ha de rellenarse el coste del GDC
+    Este procedimiento consulta al API de Didata y rellena el coste del GDC para los artículos listados en la
+    tabla recibida como parámetro. Si falla la conexión o tarda mucho devuelve mensaje de error y rellena el coste a 0
+    :param tabla_articulos: La tabla en la que ha de rellenarse el coste del GDC. El procedimiento escribe los
+    :resultados directamente en esta tabla.
     :return: OK si bien; mensaje de error si ha habido problemas
     """
     # Primeramente componemos la lista de diccionarios que entregamos al API para consultar
@@ -153,10 +154,6 @@ def request_gdc_cost_list(tabla_articulos: list):
     offset = '/product/uptime'
     # offset = '/product/endOfLife'
     url = url_base + offset
-
-    # req_dict2 = {'Manufacturer': 'Cisco', 'ManufacturerPartNumber': 'AIR-CAP3502E-I-K9'}
-    # req_dict2 = {'Manufacturer': 'Cisco', 'ManufacturerPartNumber': 'CTS-SX20N-K9'}
-    # req_list = [req_dict2]
 
     headers = {
         'Authorization': 'appId:cffd3376-2122-4bad-bb7b-510a6a888129, secret: 1f007b7d-b1fb-4954-8ee2-276de4066167',
@@ -168,16 +165,16 @@ def request_gdc_cost_list(tabla_articulos: list):
     for item in tabla_articulos:
         lista_items.append(item.sku)
 
-    set_items = set(lista_items)
+    set_items = set(lista_items)  # Se eliminan aquí los elemntos repetidos
 
-    for item in set_items:
+    for item in set_items:  # Aquí es donde se forma la lista de diccionarios de consulta
         req_dict = {'Manufacturer': 'Cisco', 'ManufacturerPartNumber': item}
         lista_consulta.append(req_dict)
 
     # Ahora hacemos la consulta al API
     try:
         resp = requests.post(url, headers=headers, json=lista_consulta, timeout=100)
-        if resp.status_code == 200:
+        if resp.status_code == 200: # Resultado OK
             respuesta = resp.json()
 
             # Ahora vamos pasando por cada uno de los componentes de la respuesta y lo comparamos con la tabla de
