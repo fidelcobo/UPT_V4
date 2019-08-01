@@ -24,15 +24,15 @@ def look_for_cisco_list(sku: str, serv_list: list, db, smartnet: bool):
     found = False
 
     if smartnet:
-        tabla = CatalogoSmartnet
+        tabla = CatalogoSmartnet  # Buscamos en la tabla de smartnets
 
     else:
-        tabla = Catalogo
+        tabla = Catalogo # Buscamos en la tabla de PSS/UCS
 
     if not serv_list:
         return found, None, None, None  # La lista está vacía. Decimos que no se ha encontrado nada
 
-    # sesion
+    # Abrimos sesión
     Session = sessionmaker(bind=engine)
     session = Session()
 

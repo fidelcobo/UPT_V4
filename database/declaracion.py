@@ -1,10 +1,10 @@
 
-from sqlalchemy import (create_engine, Column, Integer, String)
+from sqlalchemy import (Column, Integer, String)
 from sqlalchemy.ext.declarative import declarative_base
 
 # Estos son los módulos que hay que importar para declarar la DB
 
-engine = create_engine('sqlite:///cisco.db', echo=False)
+# engine = create_engine('sqlite:///cisco.db', echo=False)
 Base = declarative_base()
 
 
@@ -48,4 +48,4 @@ class CatalogoSmartnet(Base):  # Ésta es la tabla de catálogo para Smartnet
         return str(self.titulo)
 
 
-Base.metadata.create_all(engine)
+# Base.metadata.create_all(engine)
