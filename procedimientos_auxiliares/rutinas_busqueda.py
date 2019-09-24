@@ -139,6 +139,26 @@ def buscar_en_tabla_cisco(codigo, sla, tabla_datos_cisco):
 #         print('Esto va muy lento. E bazura')
 #         return 0
 
+def fraccionar_lista(lista_entrada: list, size: int):
+    """
+    Este procedimiento toma una lista_entrada, la fracciona en sublistas de longitud size (excepto la última) y genera otra
+    lista_entrada compuesta por dichas sublistas. Se usa para evitar consultas demasiado largas al API
+    :param lista_entrada: list
+    :param size: int
+    :return: lista_listas: list
+    """
+    lista_listas = []
+    repet = len(lista_entrada) // size
+
+    for x in range(repet):
+        lista_cortada = lista_entrada[x * size: (size * (x + 1))]
+        lista_listas.append(lista_cortada)
+
+    lista_cortada = lista_entrada[repet * size:]  # Es el último trozo, que puede tener cualquier longitud 1-10
+    lista_listas.append(lista_cortada)
+
+    return lista_listas
+
 
 def request_gdc_cost_list(tabla_articulos: list):
     """
@@ -171,39 +191,47 @@ def request_gdc_cost_list(tabla_articulos: list):
         req_dict = {'Manufacturer': 'Cisco', 'ManufacturerPartNumber': item}
         lista_consulta.append(req_dict)
 
-    # Ahora hacemos la consulta al API
-    try:
-        resp = requests.post(url, headers=headers, json=lista_consulta, timeout=100)
-        if resp.status_code == 200: # Resultado OK
-            respuesta = resp.json()
+    # El problema es que el API no admite más de 10 artículos en cada consulta, por lo que en algunos casos es
+    # necesario fraccionar la lista de consultas. Es lo que hacfemos a continuación
 
-            # Ahora vamos pasando por cada uno de los componentes de la respuesta y lo comparamos con la tabla de
-            # artículos. En la entrada de la tabla coincidente escribimos el coste del GDC
+    lista_fraccionada_consultas = fraccionar_lista(lista_consulta, 8)
 
-            for articulo in respuesta:
-                key = articulo['PartNumber']
-                lista_servicios = articulo['RemoteServiceCatalog']
+    # Ahora hacemos las consultas al API
 
-                for item in tabla_articulos:  # Buscamos en la tabla la entrada coincidente con "articulo"
-                    if item.sku == key:
-                        service = item.serv_lev
-                        gdc = 'GDC 2'
-                        for serv in lista_servicios:
-                            if (serv['ServicePartNumber'].lower() == service) and (serv['DeliveryOwner'] == gdc):
-                                print(serv['CombinedPrice'])
-                                item.gdc_cost = 12 * float(serv['CombinedPrice'])
+    for sublista in lista_fraccionada_consultas:
 
-            return 'OK'
+        try:
+            resp = requests.post(url, headers=headers, json=sublista, timeout=100)
+            if resp.status_code == 200: # Resultado OK
+                respuesta = resp.json()
 
-        else:
-            print(resp.status_code)
-            return 'Error {}. El coste del GDC no ha podido consultarse en el API'.format(resp.status_code)
+                # Ahora vamos pasando por cada uno de los componentes de la respuesta y lo comparamos con la tabla de
+                # artículos. En la entrada de la tabla coincidente escribimos el coste del GDC
 
-    except requests.exceptions.ReadTimeout:
-        print('Esto va muy lento. E bazura')
-        return 'El API tarda mucho en responder. El coste del GDC se deja a cero'
+                for articulo in respuesta:
+                    key = articulo['PartNumber']
+                    lista_servicios = articulo['RemoteServiceCatalog']
 
-    except:
-        print('Error de conexión. E bazura')
-        return 'No se ha podido establecer conexión con el API. Verifique su configuración de red.' \
-               ' El coste del GDC se deja a cero'
+                    for item in tabla_articulos:  # Buscamos en la tabla la entrada coincidente con "articulo"
+                        if item.sku == key:
+                            service = item.serv_lev
+                            gdc = 'GDC 2'
+                            for serv in lista_servicios:
+                                if (serv['ServicePartNumber'].lower() == service) and (serv['DeliveryOwner'] == gdc):
+                                    print(serv['CombinedPrice'], item)
+                                    item.gdc_cost = 12 * float(serv['CombinedPrice'])
+
+            else:
+                print(resp.status_code)
+                return 'Error {}. El coste del GDC no ha podido consultarse en el API'.format(resp.status_code)
+
+        except requests.exceptions.ReadTimeout:
+            print('Esto va muy lento. E bazura')
+            return 'El API tarda mucho en responder. El coste del GDC se deja a cero'
+
+        except:
+            print('Error de conexión. E bazura')
+            return 'No se ha podido establecer conexión con el API. Verifique su configuración de red.' \
+                   ' El coste del GDC se deja a cero'
+
+    return 'OK'

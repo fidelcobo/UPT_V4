@@ -32,6 +32,7 @@ class NotFound(QtWidgets.QDialog, Ui_not_found):  # Usada para presentar la pant
         super(self.__class__, self).__init__()
         self.setupUi(self)
         self.lista = lista
+
         for item in self.lista:
             self.not_found_list.addItem(item)
 
@@ -49,7 +50,6 @@ class ProcesarBackout(QRunnable):
         self.fich_a = args[0]
         self.light = args[3]
         self.signals = SignalsProc()
-
 
     @pyqtSlot()
     def run(self):

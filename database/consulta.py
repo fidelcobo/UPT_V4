@@ -32,7 +32,7 @@ def look_for_cisco_list(sku: str, serv_list: list, db, smartnet: bool):
     if not serv_list:
         return found, None, None, None  # La lista está vacía. Decimos que no se ha encontrado nada
 
-    # Abrimos sesión
+    # Abrimos sesión en la base de datos
     Session = sessionmaker(bind=engine)
     session = Session()
 

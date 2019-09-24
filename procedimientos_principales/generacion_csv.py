@@ -9,10 +9,11 @@ from procedimientos_auxiliares import pass_to_excel
 
 locale.setlocale(locale.LC_ALL, 'FR')
 base_dir = dirname(os.path.abspath(os.path.dirname(__file__)))
-db_file = os.path.join(base_dir + '\cisco.db')
+db_file = os.path.join(base_dir + '/cisco.db')
 CELDA_DESCUENTO = 'K3'
 FIRST_ROW = str(11)
 HEADERS_ROW = str(10)
+
 
 def generacion_csv(oferta, light, instance):
     file_ramon = oferta
@@ -158,4 +159,3 @@ def generacion_csv(oferta, light, instance):
         ok_total = True
 
     instance.signals.fin_OK_csv.emit(book1, book2, carpeta, ok_total)
-
