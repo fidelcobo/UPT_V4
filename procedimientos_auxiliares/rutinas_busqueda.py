@@ -78,7 +78,6 @@ def fill_aux(lista, hoja):
         hoja['B' + str(row)].value = item[2]
         hoja['D' + str(row)].value = item[3]
         hoja['E' + str(row)].value = item[4]
-
         row += 1
 
 
@@ -160,7 +159,7 @@ def fraccionar_lista(lista_entrada: list, size: int):
     return lista_listas
 
 
-def request_gdc_cost_list(tabla_articulos: list):
+def request_gdc_cost_list_old(tabla_articulos: list):
     """
     Este procedimiento consulta al API de Didata y rellena el coste del GDC para los artículos listados en la
     tabla recibida como parámetro. Si falla la conexión o tarda mucho devuelve mensaje de error y rellena el coste a 0
@@ -196,12 +195,93 @@ def request_gdc_cost_list(tabla_articulos: list):
 
     lista_fraccionada_consultas = fraccionar_lista(lista_consulta, 8)
 
-    # Ahora hacemos las consultas al API
+    # Ahora hacemos las consultas al API. En bloques de 8 (los artículos que contiene cada sublista
 
     for sublista in lista_fraccionada_consultas:
 
         try:
             resp = requests.post(url, headers=headers, json=sublista, timeout=100)
+            if resp.status_code == 200: # Resultado OK
+                respuesta = resp.json()
+
+                # Ahora vamos pasando por cada uno de los componentes de la respuesta y lo comparamos con la tabla de
+                # artículos. En la entrada de la tabla coincidente escribimos el coste del GDC
+
+                for articulo in respuesta:
+                    key = articulo['PartNumber']
+                    lista_servicios = articulo['RemoteServiceCatalog']
+
+                    for item in tabla_articulos:  # Buscamos en la tabla la entrada coincidente con "articulo"
+                        if item.sku == key:
+                            service = item.serv_lev
+                            gdc = 'GDC 2'
+                            for serv in lista_servicios:
+                                if (serv['ServicePartNumber'].lower() == service) and (serv['DeliveryOwner'] == gdc):
+                                    print(serv['CombinedPrice'], item)
+                                    item.gdc_cost = 12 * float(serv['CombinedPrice'])
+
+            else:
+                print(resp.status_code)
+                return 'Error {}. El coste del GDC no ha podido consultarse en el API'.format(resp.status_code)
+
+        except requests.exceptions.ReadTimeout:
+            print('Esto va muy lento. E bazura')
+            return 'El API tarda mucho en responder. El coste del GDC se deja a cero'
+
+        except:
+            print('Error de conexión. E bazura')
+            return 'No se ha podido establecer conexión con el API. Verifique su configuración de red.' \
+                   ' El coste del GDC se deja a cero'
+
+    return 'OK'
+
+
+def request_gdc_cost_list(tabla_articulos: list):
+    """
+    Este procedimiento consulta al API /product/uptimeSearch de Didata y rellena el coste del GDC para los artículos listados en la
+    tabla recibida como parámetro. Si falla la conexión o tarda mucho devuelve mensaje de error y rellena el coste a 0
+    :param tabla_articulos: La tabla en la que ha de rellenarse el coste del GDC. El procedimiento escribe los
+    :resultados directamente en esta tabla.
+    :return: OK si bien; mensaje de error si ha habido problemas
+    """
+    # Primeramente componemos la lista de diccionarios que entregamos al API para consultar
+
+    url_base = 'http://apps.eu.dimensiondata.com:5866'
+    offset = '/product/uptimeSearch'
+    # offset = '/product/endOfLife'
+    url = url_base + offset
+
+    headers = {
+        'Authorization': 'appId:cffd3376-2122-4bad-bb7b-510a6a888129, secret: 1f007b7d-b1fb-4954-8ee2-276de4066167',
+        'Content-type': 'application/json'
+    }
+
+    lista_consulta = []
+    lista_items = []
+    for item in tabla_articulos:
+        lista_items.append(item.sku)
+
+    set_items = set(lista_items)  # Se eliminan aquí los elemntos repetidos
+
+    for item in set_items:  # Aquí es donde se forma la lista de diccionarios de consulta
+        aux_dict = {'Manufacturer': 'Cisco', 'ManufacturerPartNumber': item}
+        lista_consulta.append(aux_dict)
+
+    # El problema es que el API no admite más de 10 artículos en cada consulta, por lo que en algunos casos es
+    # necesario fraccionar la lista de consultas. Es lo que hacfemos a continuación
+
+    lista_fraccionada_consultas = fraccionar_lista(lista_consulta, 8)
+
+    # Ahora hacemos las consultas al API. En bloques de 8 (los artículos que contiene cada sublista
+
+    DeliveryOwner = 'GDC 2'
+
+    for sublista in lista_fraccionada_consultas:
+
+        try:
+            req_dict_API = {"ProductKey": sublista, "DeliveryOwner": DeliveryOwner,
+                        "PartNumberWildcard": "False"}
+            resp = requests.post(url, headers=headers, json=req_dict_API, timeout=100)
             if resp.status_code == 200: # Resultado OK
                 respuesta = resp.json()
 
